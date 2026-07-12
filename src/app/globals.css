@@ -1,51 +1,22 @@
 @import "tailwindcss";
 @import "@heroui/styles";
 
+@theme {
+  /* কালার ভেরিয়েবলস */
+  --color-background: #F9F7F6;
+  --color-text: #2D2926;
+  --color-accent: #B76E79;
 
-
-@layer theme {
-  :root {
-    /* ডিফল্ট কালার প্যালেট */
-    --bg-color: #FAF9F6;
-    --text-color: #1F2937;
-    --accent-color: #DB2777;
-  }
-
-  /* রোজ গোল্ড থিম - যেটা আমরা ব্যবহার করব */
-  .theme-rosegold {
-    --bg-color: #F9F7F6;
-    --text-color: #2D2926;
-    --accent-color: #B76E79;
-  }
+  /* যদি আপনি আরও কালার যোগ করতে চান: */
+  --color-cream: #FFFDF9;
+  --color-soft-pink: #FDE8E9;
+  --color-golden: #D4AF37;
 }
 
 @layer base {
   body {
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    transition: background-color 0.3s, color 0.3s;
-  }
-}
-
-/* কাস্টম ইউটিলিটি ক্লাস যেন Tailwind বুঝতে পারে */
-@layer utilities {
-  .bg-accent {
-    background-color: var(--accent-color);
-  }
-
-  .text-accent {
-    color: var(--accent-color);
-  }
-
-  .border-accent {
-    border-color: var(--accent-color);
-  }
-
-  .bg-background {
-    background-color: var(--bg-color);
-  }
-
-  .text-text {
-    color: var(--text-color);
+    background: linear-gradient(135deg, #FAF9F6 0%, #F5EBE7 100%);
+    color: #2D2926;
+    min-height: 100vh;
   }
 }

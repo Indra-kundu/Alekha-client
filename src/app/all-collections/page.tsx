@@ -36,18 +36,18 @@ export default function AllCollectionsPage() {
 
     return (
         <div className="p-8">
-            <h1 className="text-3xl font-bold mb-8">Our Collections</h1>
-            {categories.map((cat) => {
+            <h1 className="text-4xl md:text-5xl font-serif text-accent tracking-widest uppercase mb-10 text-center">
+                Our Collections
+            </h1>            {categories.map((cat) => {
                 const filteredProducts = products.filter((p) => p.category === cat);
                 if (filteredProducts.length === 0) return null;
 
                 return (
                     <section key={cat} className="mb-10">
                         <h2 className="text-2xl font-bold mb-4">{cat}</h2>
-                        <div className="grid grid-cols-4 gap-6">
-                            {filteredProducts.map((p) => (
-                                <ProductCard key={p._id} product={p} />
-                            ))}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">                            {filteredProducts.map((p) => (
+                            <ProductCard key={p._id} product={p} />
+                        ))}
                         </div>
                     </section>
                 );

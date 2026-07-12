@@ -53,18 +53,31 @@ export default function CollectionsPage() {
     // সেভ বা আপডেট করার ফাংশন
     const handleSave = async () => {
         try {
+            // ডাটাবেস পাঠানোর আগে ডাটা চেক করে নিন
+            const payload = {
+                ...formData,
+                category: selectedCategory,
+                price: Number(formData.price) // নিশ্চিত করুন এটি একটি Number
+            };
+
             if (editProduct) {
-                await axios.put(`http://localhost:5000/api/products/${editProduct._id}`, { ...formData, category: selectedCategory });
+                // PUT রিকোয়েস্ট
+                await axios.put(`http://localhost:5000/api/products/${editProduct._id}`, payload);
             } else {
-                await axios.post("http://localhost:5000/api/products", { ...formData, category: selectedCategory });
+                // POST রিকোয়েস্ট
+                await axios.post("http://localhost:5000/api/products", payload);
             }
-            fetchProducts();
+
+            // সব কাজ শেষে ডেটা পুনরায় ফেচ করুন
+            await fetchProducts();
             setIsOpen(false);
             setEditProduct(null);
             setFormData({ name: "", description: "", price: 0, imageUrl: "" });
-        } catch (error) { console.error("Error saving product:", error); }
+        } catch (error) {
+            console.error("Error saving product:", error);
+            alert("Failed to save product. Check console.");
+        }
     };
-
     const handleDelete = async (id: string) => {
         await axios.delete(`http://localhost:5000/api/products/${id}`);
         fetchProducts();

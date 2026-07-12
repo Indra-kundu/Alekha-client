@@ -30,7 +30,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       {/* এখানে bg-background এবং text-text ক্লাসটি যোগ করা হয়েছে */}
-      <body className="min-h-full flex flex-col  theme-rosegold text-text">
+      <body className="min-h-full flex flex-col  bg-background text-text antialiased">
         <Navbar />
 
         <main className="flex-grow">
