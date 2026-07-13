@@ -1,5 +1,22 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Lora:ital,wght@0,400;0,700;1,400&display=swap');
 @import "tailwindcss";
 @import "@heroui/styles";
+
+/* এখানে পুরো ওয়েবসাইটের বডি এবং হেডিংয়ের জন্য ফন্ট সেট করে দিচ্ছি */
+@layer base {
+  body {
+    font-family: 'Inter', sans-serif !important;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: 'Lora', serif !important;
+  }
+}
 
 @theme {
   /* কালার ভেরিয়েবলস */
