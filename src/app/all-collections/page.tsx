@@ -1,24 +1,29 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation"; // এটি যোগ করা হয়েছে
+import { useSearchParams } from "next/navigation";
 import axios from "axios";
 import { ProductCard } from "@/components/ProductCard";
 import { Product } from "@/types/product";
-import { Spinner } from "@heroui/react";
+import { Spinner, Input } from "@heroui/react";
 
 export default function AllCollectionsPage() {
     const [products, setProducts] = useState<Product[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const searchParams = useSearchParams(); // URL প্যারামিটার পাওয়ার জন্য
-    const categoryQuery = searchParams.get("category"); // হোমপেজ থেকে আসা ক্যাটাগরি (যেমন: 'rings')
+    const [search, setSearch] = useState("");
+    const [categoryFilter, setCategoryFilter] = useState("all");
+
+    const searchParams = useSearchParams();
+    const categoryQuery = searchParams.get("category");
 
     const categories: string[] = ["Earing", "Ring", "Neckpiece", "Bracelet", "Bangles"];
 
     useEffect(() => {
+        if (categoryQuery) setCategoryFilter(categoryQuery);
+
         const fetchProducts = async () => {
             setIsLoading(true);
             try {
-                const res = await axios.get<Product[]>("http://localhost:5000/api/products");
+                const res = await axios.get<Product[]>(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/products`);
                 setProducts(res.data);
             } catch (error) {
                 console.error("Error fetching products:", error);
@@ -27,7 +32,7 @@ export default function AllCollectionsPage() {
             }
         };
         fetchProducts();
-    }, []);
+    }, [categoryQuery]);
 
     if (isLoading) {
         return (
@@ -37,42 +42,46 @@ export default function AllCollectionsPage() {
         );
     }
 
-    // ফিল্টারিং লজিক: 
-    // যদি URL-এ ক্যাটাগরি থাকে, তবে শুধু সেই ক্যাটাগরির গুলো দেখাবে। 
-    // না থাকলে সব ক্যাটাগরি দেখাবে।
-    const displayedCategories = categoryQuery
-        ? categories.filter(cat => cat.toLowerCase() === categoryQuery.toLowerCase())
-        : categories;
+    const filteredProducts = products.filter((p) => {
+        const matchesSearch = p.name.toLowerCase().includes(search.toLowerCase());
+        const matchesCategory = categoryFilter === "all" || p.category.toLowerCase() === categoryFilter.toLowerCase();
+        return matchesSearch && matchesCategory;
+    });
 
     return (
-        <div className="p-8">
-            <h1 className="text-4xl md:text-5xl font-serif font-extrabold text-accent tracking-widest uppercase mb-10 text-center">
-                {categoryQuery ? `${categoryQuery} Collection` : "Our Collections"}
+        <div className="p-8 bg-[#fdf2f2] min-h-screen">
+            <h1 className="text-4xl font-serif font-extrabold text-rose-900 text-center mb-10">
+                {categoryFilter !== "all" ? `${categoryFilter} Collection` : "Our Collections"}
             </h1>
 
-            {displayedCategories.map((cat) => {
-                const filteredProducts = products.filter((p) => p.category.toLowerCase() === cat.toLowerCase());
+            <div className="flex flex-col md:flex-row gap-4 mb-10 justify-center">
+                <Input
+                    className="max-w-xs"
+                    placeholder="Search by name..."
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                />
 
-                if (filteredProducts.length === 0) return null;
+                {/* এখানে Native Select ব্যবহার করছি যা HeroUI-এর এরর দেবে না */}
+                <select
+                    className="max-w-xs w-full p-3 rounded-xl border border-gray-300 bg-white text-gray-700"
+                    value={categoryFilter}
+                    onChange={(e) => setCategoryFilter(e.target.value)}
+                >
+                    <option value="all">All Categories</option>
+                    {categories.map((cat) => (
+                        <option key={cat} value={cat}>{cat}</option>
+                    ))}
+                </select>
+            </div>
 
-                return (
-                    <section key={cat} className="mb-15">
-                        <h2 className="text-3xl font-extrabold text-accent tracking-tight mb-8 uppercase font-serif border-b border-accent/20 pb-2">
-                            {cat}
-                        </h2>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-                            {filteredProducts.map((p) => (
-                                <ProductCard key={p._id} product={p} />
-                            ))}
-                        </div>
-                    </section>
-                );
-            })}
-
-            {/* যদি কোনো ক্যাটাগরিতে প্রোডাক্ট না পাওয়া যায় */}
-            {displayedCategories.length === 0 && (
-                <p className="text-center text-gray-500 mt-10">No products found in this category.</p>
-            )}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+                {filteredProducts.length > 0 ? (
+                    filteredProducts.map((p) => <ProductCard key={p._id} product={p} />)
+                ) : (
+                    <p className="text-center col-span-full text-gray-500">No products found matching your criteria.</p>
+                )}
+            </div>
         </div>
     );
 }

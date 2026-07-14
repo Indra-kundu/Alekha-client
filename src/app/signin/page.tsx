@@ -3,6 +3,7 @@ import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import { Button, Input } from "@heroui/react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function SigninPage() {
     const [email, setEmail] = useState("");
@@ -20,7 +21,7 @@ export default function SigninPage() {
         }, {
             onSuccess: () => {
                 alert("Sign-in successful!");
-                router.push("/"); // সাইনইন সফল হলে হোমপেজে নিয়ে যাবে
+                router.push("/");
             },
             onError: (ctx) => {
                 alert(ctx.error.message);
@@ -30,9 +31,12 @@ export default function SigninPage() {
     };
 
     return (
-        <div className="flex justify-center items-center h-screen bg-gray-50">
-            <form onSubmit={handleSignin} className="bg-white p-8 rounded-2xl shadow-lg w-[400px] flex flex-col gap-4">
-                <h2 className="text-2xl font-bold text-center">Sign In</h2>
+        <div className="flex justify-center items-center min-h-screen bg-[#fdf2f2]">
+            <form onSubmit={handleSignin} className="bg-white p-10 rounded-3xl shadow-xl w-[400px] border border-rose-100 flex flex-col gap-5">
+                <div className="text-center">
+                    <h2 className="text-3xl font-extrabold text-rose-900">Welcome Back</h2>
+                    <p className="text-gray-500 text-sm mt-1">Please sign in to your account</p>
+                </div>
 
                 <Input
                     label="Email"
@@ -41,6 +45,8 @@ export default function SigninPage() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
+                    variant="bordered"
+                    color="danger"
                 />
                 <Input
                     label="Password"
@@ -49,11 +55,20 @@ export default function SigninPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
+                    variant="bordered"
+                    color="danger"
                 />
 
-                <Button type="submit" color="primary" className="w-full mt-2" isLoading={isLoading}>
+                <Button type="submit" className="w-full bg-rose-600 text-white font-semibold mt-2" size="lg" isLoading={isLoading}>
                     Sign In
                 </Button>
+
+                <p className="text-center text-sm text-gray-600 mt-2">
+                    Don't have an account? {" "}
+                    <Link href="/signup" className="text-rose-600 font-bold hover:underline">
+                        Sign up here
+                    </Link>
+                </p>
             </form>
         </div>
     );

@@ -1,17 +1,23 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react"; // useContext যোগ করা হয়েছে
 import axios from "axios";
 import { useParams } from "next/navigation";
 import { Product } from "@/types/product";
-import { Accordion, AccordionItem } from "@heroui/react"; // HeroUI ইমপোর্ট
+import { Accordion, AccordionItem } from "@heroui/react";
+import { CartContext } from '@/context/CartContext';
+import toast, { Toaster } from 'react-hot-toast'; // এটি আগে npm install react-hot-toast দিয়ে ইন্সটল করে নেবেন
 
+// আর্গুমেন্ট থেকে { product } মুছে ফেলা হয়েছে কারণ আমরা স্টেট থেকে প্রোডাক্ট পাচ্ছি
 export default function ProductDetailsPage() {
+    const { addToCart } = useContext(CartContext);
     const { id } = useParams();
     const [product, setProduct] = useState<Product | null>(null);
 
     useEffect(() => {
         if (id) {
-            axios.get(`http://localhost:5000/api/products/${id}`).then(res => setProduct(res.data));
+            axios.get(`http://localhost:5000/api/products/${id}`)
+                .then(res => setProduct(res.data))
+                .catch(err => console.error("Error fetching product:", err));
         }
     }, [id]);
 
@@ -45,12 +51,18 @@ export default function ProductDetailsPage() {
                             <p className="text-sm text-gray-600">{product.design || "Intricate floral pattern with high-polish texture."}</p>
                         </AccordionItem>
                     </Accordion>
-
-                    <button className="bg-black text-white px-8 py-3 rounded-xl mt-8 w-full md:w-auto hover:bg-gray-800 transition">
+                    <button
+                        onClick={() => {
+                            addToCart(product);
+                            toast.success("Added to cart successfully!"); // এখানে টোস্টটি কল করা হয়েছে
+                        }}
+                        className="mt-8 bg-rose-900 text-white px-6 py-3 rounded-lg hover:bg-rose-800 transition-all"
+                    >
                         Add to Cart
                     </button>
                 </div>
             </div>
         </div>
+
     );
 }
